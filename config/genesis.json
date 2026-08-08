@@ -1,0 +1,31 @@
+{
+  "chain_id": "venturechain-devnet-1",
+  "chain_name": "VentureChain",
+  "token_symbol": "VTC",
+  "block_time_seconds": 3,
+  "validators": [
+    {
+      "id": "validator-1",
+      "public_key": "REPLACE_WITH_GENERATED_PUBKEY_1",
+      "name": "Venturify Node A"
+    },
+    {
+      "id": "validator-2",
+      "public_key": "REPLACE_WITH_GENERATED_PUBKEY_2",
+      "name": "Venturify Node B"
+    },
+    {
+      "id": "validator-3",
+      "public_key": "REPLACE_WITH_GENERATED_PUBKEY_3",
+      "name": "Venturify Node C"
+    }
+  ],
+  "initial_allocations": [
+    {
+      "address": "REPLACE_WITH_TREASURY_ADDRESS",
+      "balance": 1000000000,
+      "note": "Platform treasury - mints VTC on fiat deposit via backend"
+    }
+  ],
+  "genesis_timestamp": "2026-08-08T00:00:00Z"
+}

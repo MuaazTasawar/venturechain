@@ -1,0 +1,19 @@
+# Binaries
+/bin/
+*.exe
+*.test
+
+# Node data (chain state)
+/data/
+*.db
+
+# Env
+.env
+
+# IDE
+.vscode/
+.idea/
+
+# OS
+.DS_Store
+Thumbs.db
