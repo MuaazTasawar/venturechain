@@ -179,7 +179,10 @@ func main() {
 
 	go node.RunProductionLoop()
 
-	server := api.NewServer(chain, mp, node.Peers, treasuryAddr, escrowWallet, *internalAPIKey)
+	server, err := api.NewServer(chain, mp, node.Peers, store, treasuryAddr, escrowWallet, *internalAPIKey)
+	if err != nil {
+		log.Fatalf("failed to initialize API server: %v", err)
+	}
 	log.Printf("api: node %s serving client API on %s", *validatorID, *apiBind)
 	if err := http.ListenAndServe(*apiBind, server.Router()); err != nil {
 		log.Fatalf("api server failed: %v", err)
