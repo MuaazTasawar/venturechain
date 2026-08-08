@@ -128,6 +128,9 @@ func ValidateTransaction(tx *Transaction, state *State) error {
 }
 
 func checkSenderFunds(tx *Transaction, state *State) error {
+	if tx.From == "" {
+		return fmt.Errorf("transaction has no sender address")
+	}
 	balance := state.GetBalance(tx.From)
 	if balance < tx.Amount {
 		return ErrInsufficientBalance
