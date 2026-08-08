@@ -97,6 +97,17 @@ func (bc *Blockchain) LatestBlock() *Block {
 	return bc.Blocks[len(bc.Blocks)-1]
 }
 
+// BlockAt returns the block at the given index, or an error if it hasn't
+// been produced yet. Used by the REST API to serve individual blocks.
+func (bc *Blockchain) BlockAt(index int64) (*Block, error) {
+	bc.mu.RLock()
+	defer bc.mu.RUnlock()
+	if index < 0 || index >= int64(len(bc.Blocks)) {
+		return nil, fmt.Errorf("block %d does not exist, chain height is %d", index, len(bc.Blocks)-1)
+	}
+	return bc.Blocks[index], nil
+}
+
 // AddBlock validates a proposed block against the current chain tip and
 // state, applies every transaction in it, and appends it to the chain.
 // validatorPubKeyHex is looked up by the caller (consensus layer) from the
@@ -110,8 +121,6 @@ func (bc *Blockchain) AddBlock(block *Block, validatorPubKeyHex string) error {
 		return fmt.Errorf("block %d rejected: %w", block.Index, err)
 	}
 
-	// Apply every transaction. If any fails, the whole block is rejected and
-	// no partial state change is kept.
 	snapshot := bc.State.clone()
 	for _, tx := range block.Transactions {
 		if err := ValidateTransaction(tx, bc.State); err != nil {

@@ -97,11 +97,10 @@ func (c *Contract) SubmitMilestone(milestoneID string) error {
 }
 
 // BuildMilestoneReleaseTx builds (unsigned) the on-chain RELEASE_MILESTONE
-// transaction paying the founder for an approved milestone. Caller must sign
-// it with a key authorized to release this contract's escrow (in practice,
-// the platform's automated escrow signer, not either party directly), submit
-// it, then call ApproveMilestone once confirmed.
-func (c *Contract) BuildMilestoneReleaseTx(milestoneID string, releaseNonce int64) (*blockchain.Transaction, error) {
+// transaction paying the founder for an approved milestone. authorityAddress
+// is the platform escrow authority's own address - it is the entity that
+// signs this transaction (see internal/api), not either contract party.
+func (c *Contract) BuildMilestoneReleaseTx(milestoneID, authorityAddress string, releaseNonce int64) (*blockchain.Transaction, error) {
 	m := c.findMilestone(milestoneID)
 	if m == nil {
 		return nil, fmt.Errorf("milestone %s not found on contract %s", milestoneID, c.ID)
@@ -111,7 +110,7 @@ func (c *Contract) BuildMilestoneReleaseTx(milestoneID string, releaseNonce int6
 	}
 	return blockchain.NewTransaction(
 		blockchain.TxReleaseMilestone,
-		c.InvestorAddress, // From is informational here; escrow authority is enforced by the chain's lock owner, not tx.From
+		authorityAddress,
 		c.FounderAddress,
 		m.Amount,
 		c.ID,
@@ -156,8 +155,9 @@ func (c *Contract) DisputeMilestone(milestoneID string) error {
 
 // BuildArbitrationTx builds (unsigned) the on-chain ARBITRATE transaction
 // splitting or awarding the disputed milestone's escrowed amount to whichever
-// party the arbitrator rules for.
-func (c *Contract) BuildArbitrationTx(milestoneID string, awardTo string, amount int64, arbitratorNonce int64) (*blockchain.Transaction, error) {
+// party the arbitrator rules for. authorityAddress is the platform escrow
+// authority's own address - the signer of this transaction.
+func (c *Contract) BuildArbitrationTx(milestoneID, authorityAddress, awardTo string, amount int64, arbitratorNonce int64) (*blockchain.Transaction, error) {
 	if c.State != StateDisputed {
 		return nil, fmt.Errorf("contract must be DISPUTED to arbitrate, currently %s", c.State)
 	}
@@ -166,7 +166,7 @@ func (c *Contract) BuildArbitrationTx(milestoneID string, awardTo string, amount
 	}
 	return blockchain.NewTransaction(
 		blockchain.TxArbitrate,
-		c.InvestorAddress,
+		authorityAddress,
 		awardTo,
 		amount,
 		c.ID,
@@ -195,15 +195,16 @@ func (c *Contract) ResolveArbitration(milestoneID string, terminate bool) error 
 
 // BuildRefundTx builds (unsigned) the on-chain REFUND transaction returning
 // all remaining escrowed funds to the investor, used for mutual early
-// termination.
-func (c *Contract) BuildRefundTx(refundNonce int64) (*blockchain.Transaction, error) {
+// termination. authorityAddress is the platform escrow authority's own
+// address - the signer of this transaction.
+func (c *Contract) BuildRefundTx(authorityAddress string, refundNonce int64) (*blockchain.Transaction, error) {
 	remaining := RemainingAmount(c.Milestones)
 	if remaining <= 0 {
 		return nil, fmt.Errorf("no remaining escrow to refund on contract %s", c.ID)
 	}
 	return blockchain.NewTransaction(
 		blockchain.TxRefund,
-		c.FounderAddress,
+		authorityAddress,
 		c.InvestorAddress,
 		remaining,
 		c.ID,
