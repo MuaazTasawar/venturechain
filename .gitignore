@@ -7,6 +7,9 @@
 /data/
 *.db
 
+# Wallets - NEVER commit these
+*.wallet.json
+
 # Env
 .env
 
@@ -16,4 +19,7 @@
 
 # OS
 .DS_Store
-Thumbs.db*.wallet.json
+Thumbs.db
+
+# Local run scripts
+phase*.ps1

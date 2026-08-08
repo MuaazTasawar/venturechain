@@ -6,23 +6,23 @@
   "validators": [
     {
       "id": "validator-1",
-      "public_key": "REPLACE_WITH_GENERATED_PUBKEY_1",
+      "public_key": "029a5a9e0bef9493e5469f166eb087a0791f20a51808cde19b7fa2af1e047e80ea",
       "name": "Venturify Node A"
     },
     {
       "id": "validator-2",
-      "public_key": "REPLACE_WITH_GENERATED_PUBKEY_2",
+      "public_key": "03945bf5970f82af70bbe02690e1d09e75af6f8ecb1d3bbfe034fd4bd27dbbd757",
       "name": "Venturify Node B"
     },
     {
       "id": "validator-3",
-      "public_key": "REPLACE_WITH_GENERATED_PUBKEY_3",
+      "public_key": "0228e4b14b9a47c75151dd12ef53ea384140ecccb2158a405594d3979cbf0402cd",
       "name": "Venturify Node C"
     }
   ],
   "initial_allocations": [
     {
-      "address": "REPLACE_WITH_TREASURY_ADDRESS",
+      "address": "VTCe7c33d74eec2c0f96fde3a5c0a7c0a90b228499b",
       "balance": 1000000000,
       "note": "Platform treasury - mints VTC on fiat deposit via backend"
     }
